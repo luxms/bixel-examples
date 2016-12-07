@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="https://www.gstatic.com/charts/loader.js"></script>
+  <script src="https://rawgit.com/rcslabs/bixel/master/bixel.js"></script>
+</head>
+<body>
+  <div id="result">
+  </div>
+
+
+  <script>
+    bixel.init({
+      zsCount: 1,
+      xsCount: 1
+    });
+
+    bixel.on('loading', function(axis) {
+      //
+    });
+
+    bixel.on('load', function(data, axis) {
+      var z = axis.getZs()[0];
+      var ys = axis.getYs();
+      var x = axis.getXs()[0];
+
+      function drawChart() {
+        var dataArray = ys.map(function(y) {
+          return [y.title, data.getValue(z, y, x).valueOf()];
+        });
+
+        dataArray.unshift(['-', 'Quantity']);
+
+        var table = google.visualization.arrayToDataTable(dataArray);
+        var options = {
+          title: z.title,
+          is3D: true,
+          pieHole: 0.4
+        };
+        var chart = new google.visualization.PieChart(document.getElementById('result'));
+        chart.draw(table, options);
+      };
+
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+    });
+
+  </script>
+</body>
+</html>
