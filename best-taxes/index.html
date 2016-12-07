@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.3.0/knockout-min.js"></script>
+  <script src="https://rawgit.com/rcslabs/bixel/master/bixel.js"></script>
+</head>
+<body>
+  <h1>Внешний виджет</h1>
+
+  <div id="result">
+    <!-- ko if: loading -->
+    <span>Загрузка ...</span>
+    <!-- /ko -->
+
+    <!-- ko if: !loading() -->
+    <h2>Лучшее значение по всем штатам:</h2>
+    <span data-bind="text:metric().title"></span>: <span data-bind="text:value"></span>
+    <br/>
+    <span data-bind="text:location().title"></span>
+    <br/>
+    <span>На период: </span><span data-bind="text:period().title"></span>
+    <!-- /ko -->
+  </div>
+
+
+  <script>
+    // ui
+    var model = {
+      loading: ko.observable('sss'),
+      period: ko.observable(null),
+      metric: ko.observable(null),
+      location: ko.observable(null),
+      value: ko.observable(null)
+    };
+    ko.applyBindings(model, document.getElementById('result'));
+
+
+
+    bixel.init({
+      locationsCount: Infinity,
+      periodsCount: 1,
+      metricsCount: 1
+    });
+
+    bixel.on('loading', function(axis) {
+      model.loading(true);
+    });
+
+    bixel.on('load', function(data, axis) {
+      var locations = axis.getLocations();
+      var metric = axis.getMetrics()[0];
+      var period = axis.getPeriods()[0];
+
+      var bestVal = -Infinity;
+      var bestLocation = null;
+
+      for (var i = 0; i < locations.length; i++) {
+        var value = data.getValue(locations[i], metric, period);
+        if (value > bestVal) {
+          bestLocation = locations[i];
+          bestVal = value;
+        }
+      }
+
+      model.location(bestLocation);
+      model.metric(metric);
+      model.period(period);
+      model.value(bestVal);
+      model.loading(false);
+    });
+
+    bixel.on('no-data', function(axis) {
+      debugger;
+    });
+
+  </script>
+</body>
+</html>
