@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="https://www.gstatic.com/charts/loader.js"></script>
+  <script src="https://rawgit.com/rcslabs/bixel/master/bixel.js"></script>
+</head>
+<body>
+  <div id="result">
+  </div>
+
+
+  <script>
+    var API_KEY = 'AIzaSyCK6h3M9pR20YyyXfW2d4aEC8ub22hrDLs';
+    var chart;
+
+    bixel.init({
+      metricsCount: 1,
+      periodsCount: 1
+    });
+
+    bixel.on('loading', function(axis) {
+      //
+    });
+
+    bixel.on('load', function(data, axis) {
+      var m = axis.getMetrics()[0];
+      var ls = axis.getLocations();
+      var p = axis.getPeriods()[0];
+
+      function drawChart() {
+        var dataArray = ls.map(function(l) {
+          var stateName = l.title;
+          if (stateName.match(/\((.+)\)/)) {
+            stateName = 'US-' + RegExp.$1;
+          }
+          return [stateName, data.getValue(m, l, p).valueOf()];
+        });
+        dataArray.unshift(['State', 'Dollars']);
+        var table = google.visualization.arrayToDataTable(dataArray);
+
+        var options = {
+          dataMode: 'regions',
+          region: 'US',
+          resolution: 'provinces',
+          colorAxis: {colors: ['#00853f', 'black', '#e31b23']},
+          backgroundColor: '#81d4fa',
+          datalessRegionColor: '#f8bbd0',
+          defaultColor: '#f5f5f5',
+          height:  '100%'
+         };
+
+        if (!chart) {
+          chart = new google.visualization.GeoChart(document.getElementById('result'));
+        }
+        chart.draw(table, options);
+
+      };
+
+      google.charts.load('upcoming', {'packages':['geochart'], mapsApiKey: API_KEY});
+      google.charts.setOnLoadCallback(drawChart);
+    });
+
+  </script>
+</body>
+</html>
