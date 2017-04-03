@@ -14,6 +14,13 @@
     var API_KEY = 'AIzaSyCK6h3M9pR20YyyXfW2d4aEC8ub22hrDLs';
     var chart;
 
+    var cursorX;
+    var cursorY;
+    document.onmousemove = function(e) {        // will save mouse coords
+      cursorX = e.pageX;
+      cursorY = e.pageY;
+    }
+
     bixel.init({
       metricsCount: 1,
       periodsCount: 1
@@ -47,14 +54,35 @@
           backgroundColor: '#81d4fa',
           datalessRegionColor: '#f8bbd0',
           defaultColor: '#f5f5f5',
-          height:  '100%'
-         };
+          height: '100%'
+        };
 
         if (!chart) {
           chart = new google.visualization.GeoChart(document.getElementById('result'));
+          google.visualization.events.addListener(chart, 'regionClick', function (event) {
+            var clickedRegionName = event.region;   // ex: "US-CA"
+            if (clickedRegionName.match(/^US-(.+)$/)) {
+              clickedRegionName = RegExp.$1;
+            }
+
+            var clickedLocation = ls.find(l => {
+              return (l.title.match(/\((.+)\)/) && clickedRegionName == RegExp.$1);
+            });
+
+            if (clickedLocation) {
+              bixel.invoke('CLICK_DATA_POINT', {
+                event: {
+                  pageX: cursorX,
+                  pageY: cursorY,
+                },
+                metric: m.id,
+                location: clickedLocation.id,
+                period: p.id
+              })
+            }
+          });
         }
         chart.draw(table, options);
-
       };
 
       google.charts.load('upcoming', {'packages':['geochart'], mapsApiKey: API_KEY});
