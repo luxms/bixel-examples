@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <script src="https://www.gstatic.com/charts/loader.js"></script>
-  <script src="https://rawgit.com/rcslabs/bixel/master/bixel.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/luxms/bixel@master/bixel.js"></script>
 </head>
 <body>
   <div id="result">
@@ -19,7 +19,7 @@
     document.onmousemove = function(e) {        // will save mouse coords
       cursorX = e.pageX;
       cursorY = e.pageY;
-    }
+    };
 
     bixel.init({
       metricsCount: 1,
@@ -83,7 +83,7 @@
           });
         }
         chart.draw(table, options);
-      };
+      }
 
       google.charts.load('upcoming', {'packages':['geochart'], mapsApiKey: API_KEY});
       google.charts.setOnLoadCallback(drawChart);

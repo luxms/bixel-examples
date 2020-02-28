@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.3.0/knockout-min.js"></script>
-  <script src="https://rawgit.com/rcslabs/bixel/master/bixel.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/luxms/bixel@master/bixel.js"></script>
 </head>
 <body>
   <h1>Внешний виджет</h1>
@@ -27,7 +27,7 @@
   <script>
     // ui
     var model = {
-      loading: ko.observable('sss'),
+      loading: ko.observable(true),
       period: ko.observable(null),
       metric: ko.observable(null),
       location: ko.observable(null),
